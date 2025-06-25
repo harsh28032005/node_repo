@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const studentSchema = new mongoose.Schema(
   {
-    fname: { type: String, trim: true, required: true },
-    lname: { type: String, trim: true, required: true },
+    fName: { type: String, trim: true, lowercase: true, required: true },
+    lName: { type: String, trim: true, lowercase: true, required: true },
     age: { type: Number, required: true },
     gender: {
       type: String,
@@ -13,7 +13,7 @@ const studentSchema = new mongoose.Schema(
     },
     mobile: { type: Number, unique: true, required: true },
     email: { type: String, unique: true, required: true },
-    isMarried: {type: Boolean, default: false}
+    isMarried: { type: Boolean, default: false },
   },
   { timestamps: true }
 );

@@ -7,16 +7,20 @@ export const createStudent = async (req, res) => {
         .status(400)
         .send({ status: 400, msg: "Request body can not be empty..." });
     }
-    if (!req.body.fname) {
-      return res.status(400).send({ status: 400, msg: "Name is required." });
+    if (!req.body.fName) {
+      return res
+        .status(400)
+        .send({ status: 400, msg: "first name is required." });
     }
-    if (!isNaN(req.body.fname || req.body.fname.trim())) {
+    if (!isNaN(req.body.fName || req.body.fName.trim())) {
       return res.status(400).send({ status: 400, msg: "Invalid Name." });
     }
-    if (!req.body.lname) {
-      return res.status(400).send({ status: 400, msg: "Name is required." });
+    if (!req.body.lName) {
+      return res
+        .status(400)
+        .send({ status: 400, msg: "last name is required." });
     }
-    if (!isNaN(req.body.lname || req.body.fname.trim())) {
+    if (!isNaN(req.body.lName || req.body.lName.trim())) {
       return res.status(400).send({ status: 400, msg: "Invalid Name." });
     }
     if (!req.body.age) {
@@ -77,5 +81,28 @@ export const createStudent = async (req, res) => {
     });
   } catch {
     res.status(500).send({ status: 500, msg: "Internal Server Error." });
+  }
+};
+
+export const getAllStudents = async (req, res) => {
+  try {
+    let { fName, age } = req.query;
+    let filter = {}
+
+    if(fName) {
+      filter.fName = fName
+    }
+    if (age) {
+      filter.age = age
+    }
+
+    // console.log(filter, "filter")
+    // const getStudents = await Student.findOne(filter); // findOne query returns data in object. If no data found then it returns null.
+    const getStudents = await Student.find(filter); // find query returns data in array. If no data found then it returns an empty array.
+    return res
+      .status(200)
+      .send({ status: 200, msg: "List of all students", data: getStudents });
+  } catch (err) {
+    return res.status(500).send({ status: 500, msg: "Internal Server Error" });
   }
 };

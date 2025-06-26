@@ -1,19 +1,21 @@
 import express from "express";
 import mongoose from "mongoose";
-import studentRoute from "./routes/studentRoute.js";
+import router from "./routes/employeeRoute.js";
 import "dotenv/config";
 const app = express();
 app.use(express.json());
 
-const url = process.env.MONGO_URL;
-
+const url = process.env.mongoUrl;
 mongoose
   .connect(url)
-  .then(() => console.log("MongoDb Database is connected successfully..."))
-  .catch((err) => console.log("MongoDb Database is not connected...", err)),
+  .then(() => {
+    console.log("MongoDb Database is connected successfully...");
+  })
+  .catch((err) => {
+    console.log("MongoDb Database is not connected...", err);
+  });
 
-app.use("", studentRoute);
-
+app.use("", router);
 app.listen(process.env.PORT, () =>
-  console.log("Server is running on the port 3000...")
+  console.log("Server is running on port 3000.")
 );

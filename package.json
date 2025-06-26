@@ -1,15 +1,16 @@
 {
-  "name": "node_application",
+  "name": "node_repo",
   "version": "1.0.0",
+  "description": "\"This is my third node application\"",
   "main": "index.js",
   "type": "module",
+  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1",
     "start": "nodemon index.js"
   },
   "author": "\"Harsh Gautam\"",
   "license": "ISC",
-  "description": "This is my second node_application",
   "dependencies": {
     "dotenv": "^16.5.0",
     "express": "^5.1.0",

@@ -62,3 +62,24 @@ export const createEmployee = async (req, res) => {
     return res.status(500).send("Internal Server Error.");
   }
 };
+export const getAllEmployees = async (req, res) => {
+  try {
+    let { name, age } = req.query;
+    let filter = {};
+
+    if (name) {
+      filter.name = name;
+    }
+    if (age) {
+      filter.age = age;
+    }
+    const getEmployee = await Employee.find(filter);
+    console.log(filter, "filter")
+    // const getEmployee = await Employee.findOne(filter)
+    return res
+      .status(200)
+      .send({ status: 200, msg: "List of all employees", data: getEmployee });
+  } catch {
+    return res.status(500).send({status: 500, msg: "Internal Server Error"})
+  }
+};

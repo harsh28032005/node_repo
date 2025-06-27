@@ -86,23 +86,43 @@ export const createStudent = async (req, res) => {
 
 export const getAllStudents = async (req, res) => {
   try {
-    let { fName, age } = req.query;
-    let filter = {}
+    let { fName, age, page = 1, limit = 2 } = req.query;
 
-    if(fName) {
-      filter.fName = fName
+    // console.log(page, "page", +limit, "limit");
+    // console.log(typeof page, "page", typeof limit, "limit");
+
+    if (isNaN(page) || page == 0) {
+      return res
+        .status(400)
+        .send({ status: 400, msg: "Page must be a no and greater than 0" });
+    }
+    if (isNaN(limit) || limit == 0) {
+      return res
+        .status(400)
+        .send({ status: 400, msg: "Limit must be a no and greater than 0" });
+    }
+    page = +page ? +page : 1 // Ternary Operator condition ? true (Ist) : false(IInd)
+    limit = +limit ? +limit : 2 // Ternary Operator condition ? true (Ist) : false(IInd)
+    let skip = (+page - 1) * +limit; // (1-1)*5 = 0*5 = 0
+
+    // console.log(skip, "skip");
+    let filter = {};
+
+    if (fName) {
+      filter.fName = fName;
     }
     if (age) {
-      filter.age = age
+      filter.age = age;
     }
 
     // console.log(filter, "filter")
     // const getStudents = await Student.findOne(filter); // findOne query returns data in object. If no data found then it returns null.
-    const getStudents = await Student.find(filter); // find query returns data in array. If no data found then it returns an empty array.
+    const getStudents = await Student.find(filter).limit(+limit).skip(skip); // find query returns data in array. If no data found then it returns an empty array.
+    const total = await Student.countDocuments(filter)
     return res
       .status(200)
-      .send({ status: 200, msg: "List of all students", data: getStudents });
+      .send({ status: 200, msg: "List of all students", data: getStudents, count: total });  // no of doc/limit per
   } catch (err) {
-    return res.status(500).send({ status: 500, msg: "Internal Server Error" });
+    return res.status(500).send({ status: 500, msg: err });
   }
 };

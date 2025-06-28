@@ -64,21 +64,37 @@ export const createEmployee = async (req, res) => {
 };
 export const getAllEmployees = async (req, res) => {
   try {
-    let { name, age } = req.query;
+    
+    let { name, age, page = 1, limit = 2 } = req.query;
     let filter = {};
 
+    if(isNaN(page) || page == 0){
+      return res.status(400).send({
+        status: 400, msg: "Page must be a number and can not be 0"
+      })
+    }
+    if(isNaN(limit) || page == 0){
+      return res.status(400).send({
+        status: 400, msg: "Limit must be a number and can not be 0"
+      })
+    }
     if (name) {
       filter.name = name;
     }
     if (age) {
       filter.age = age;
     }
-    const getEmployee = await Employee.find(filter);
+
+    page = +page ? +page : 1
+    limit = +limit ? +limit : 2
+    const skip = (page - 1) * limit;
+    const getEmployee = await Employee.find(filter).select({_id: 1, name: 1, age: 1}).limit(limit).skip(skip).sort({_id : -1});
+    const total = await Employee.countDocuments(filter)
     console.log(filter, "filter")
     // const getEmployee = await Employee.findOne(filter)
     return res
       .status(200)
-      .send({ status: 200, msg: "List of all employees", data: getEmployee });
+      .send({ status: 200, msg: "List of all employees", data: getEmployee, count: total });
   } catch {
     return res.status(500).send({status: 500, msg: "Internal Server Error"})
   }

@@ -121,7 +121,7 @@ export const getAllStudents = async (req, res) => {
 
     // const getStudents = await Student.findOne(filter); // findOne query returns data in object. If no data found then it returns null.
     const getStudents = await Student.find(filter) // here we are fetching data from database.
-      .select({ _id: 1, fname: 1, lname: 1 }) // here we are selecting particular fields from database
+      // .select({ _id: 1, fname: 1, lname: 1 }) // here we are selecting particular fields from database
       .limit(+limit) // here we are applying limit on no of documents
       .skip(skip) // here we are skipping the documents based on the page no provided.
       .sort({ _id: -1 }); // here we are sorting the documents based on the _id field in Descending Order.
@@ -157,11 +157,100 @@ export const getIndividualStudent = async (req, res) => {
     // const getStudent = await Student.find({ _id: _id }); // this will fetch the particular document. If it finds then return in the form of an array of object. Otherwise will return empty array like this []
 
     const getStudent = await Student.findById(_id); // fetch the particular document based on the _id. If it finds then return in the form of an object. Otherwise will return null
-    
+
     return res.status(200).json({
       status: 200,
       msg: "Individual Student's Details",
       data: getStudent,
+    });
+  } catch (err) {
+    return res.status(500).send({ status: 500, msg: err.message });
+  }
+};
+
+export const updateStudent = async (req, res) => {
+  try {
+    let { _id, fname, lname, age, gender, mobile, email, isMarried } = req.body;
+
+    if (!_id)
+      return res.status(400).send({ status: 400, msg: "_id is required" });
+
+    if (!mongoose.Types.ObjectId.isValid(_id))
+      return res.status(400).send({ status: 400, msg: "Invalid _id" });
+
+    let isAlreadyExist = await Student.findById(_id);
+    // console.log(isAlreadyExist, "isAlreadyExist")
+    if (!isAlreadyExist)
+      return res
+        .status(400)
+        .send({ status: 400, msg: "No data found to update" });
+
+    if (req.body.hasOwnProperty("fname") && !fname)
+      return res.status(400).send({ status: 400, msg: "fname is required" });
+
+    if (fname && !isNaN(fname))
+      return res.status(400).send({ status: 400, msg: "Invalid fname" });
+
+    if (req.body.hasOwnProperty("lname") && !lname)
+      return res.status(400).send({ status: 400, msg: "lname is required" });
+
+    if (lname && !isNaN(lname))
+      return res.status(400).send({ status: 400, msg: "Invalid lname" });
+
+    if (req.body.hasOwnProperty("age") && !age)
+      return res.status(400).send({ status: 400, msg: "age is required" });
+
+    if (age && typeof age !== "number")
+      return res.status(400).send({ status: 400, msg: "Invalid age" });
+
+    if (req.body.hasOwnProperty("mobile") && !mobile)
+      return res.status(400).send({ status: 400, msg: "mobile is required" });
+
+    if (mobile && typeof mobile !== "number")
+      return res.status(400).send({ status: 400, msg: "Invalid mobile" });
+
+    if (req.body.hasOwnProperty("email") && !email)
+      return res.status(400).send({ status: 400, msg: "email is required" });
+
+    if (email && typeof email !== "string")
+      return res.status(400).send({ status: 400, msg: "Invalid email" });
+
+    let checkNoExist = await Student.findOne({ mobile: mobile });
+
+    if (checkNoExist && checkNoExist._id != _id)
+      return res.status(400).send({ status: 400, msg: "Number already exist" });
+
+    let checkEmailExist = await Student.findOne({ email: email });
+
+    if (checkEmailExist && checkEmailExist._id != _id)
+      return res.status(400).send({ status: 400, msg: "Email already exist" });
+
+    delete req.body._id;
+
+    let updateData = await Student.findOneAndUpdate(
+      { _id: _id }, // to find the document based on condition
+      req.body, // data to be update
+      { new: true, upsert: true } // { new: true }, returns the updated document. If it is not mentioned then findOneAndUpdate will return the old document without reflecting the new changes in response. And { upsert: true } tells the condition, if document found then update that document otherwise create a new document in the database.
+    );
+    // let updateData = await Student.findOneAndUpdate(
+    //   { _id: _id },
+    //   {
+    //     $set: {
+    //       fname: fname,
+    //       lname: lname,
+    //       age: age,
+    //       mobile: mobile,
+    //       email: email,
+    //     },
+    //   },
+    //   { new: true }
+    // );
+    // console.log(updateData, "updatedData");
+
+    return res.status(200).send({
+      status: 200,
+      msg: "Student updated successfully",
+      data: updateData,
     });
   } catch (err) {
     return res.status(500).send({ status: 500, msg: err.message });

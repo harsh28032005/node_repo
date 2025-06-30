@@ -2,8 +2,8 @@ import mongoose from "mongoose";
 
 const studentSchema = new mongoose.Schema(
   {
-    fName: { type: String, trim: true, lowercase: true, required: true },
-    lName: { type: String, trim: true, lowercase: true, required: true },
+    fname: { type: String, trim: true, lowercase: true, required: true },
+    lname: { type: String, trim: true, lowercase: true, required: true },
     age: { type: Number, required: true },
     gender: {
       type: String,

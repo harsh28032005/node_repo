@@ -7,6 +7,7 @@ const employeeSchema = new mongoose.Schema(
     gender: {
       type: String,
       enum: ["male", "female"],
+      lowercase: true,
       trim: true,
       required: true,
     },

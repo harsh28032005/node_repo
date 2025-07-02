@@ -172,9 +172,12 @@ export const updateEmployeeDetails = async (req, res) => {
       return res.status(400).send({ status: 400, msg: "Invalid gender" });
     }
     
-    console.log(typeof(isMarried), "isMarried")
 
+<<<<<<< HEAD
     if (req.body.hasOwnProperty("isMarried") && typeof(isMarried) != "boolean") {
+=======
+    if (req.body.hasOwnProperty("isMarried") && typeof(isMarried) !== "boolean") {
+>>>>>>> b917416b692e7163f54b9e61aa281b4571070b3d
       return res
         .status(400)
         .send({ status: 400, msg: "isMarried value is invalid" });

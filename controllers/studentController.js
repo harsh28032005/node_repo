@@ -200,7 +200,7 @@ export const updateStudent = async (req, res) => {
     if (req.body.hasOwnProperty("age") && !age)
       return res.status(400).send({ status: 400, msg: "age is required" });
 
-    if (age && typeof age !== "number")
+    if (age && typeof age != "number")
       return res.status(400).send({ status: 400, msg: "Invalid age" });
 
     if (req.body.hasOwnProperty("mobile") && !mobile)
@@ -212,10 +212,11 @@ export const updateStudent = async (req, res) => {
     if (req.body.hasOwnProperty("email") && !email)
       return res.status(400).send({ status: 400, msg: "email is required" });
 
-    if (email && typeof email !== "string")
+    if (email && typeof email != "string")
       return res.status(400).send({ status: 400, msg: "Invalid email" });
 
     let checkNoExist = await Student.findOne({ mobile: mobile });
+    
 
     if (checkNoExist && checkNoExist._id != _id)
       return res.status(400).send({ status: 400, msg: "Number already exist" });

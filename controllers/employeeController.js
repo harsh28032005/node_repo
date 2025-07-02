@@ -144,7 +144,7 @@ export const updateEmployeeDetails = async (req, res) => {
         .send({ status: 400, msg: "No data found to update" });
     }
 
-    if (req.body.hasOwnProperty(name) && !name) {
+    if (req.body.hasOwnProperty("name") && !name) {
       return res.status(400).send({ status: 400, msg: "name is required." });
     }
 
@@ -152,7 +152,7 @@ export const updateEmployeeDetails = async (req, res) => {
       return res.status(400).send({ status: 400, msg: "Invalid name." });
     }
 
-    if (req.body.hasOwnProperty(age) && !age) {
+    if (req.body.hasOwnProperty("age") && !age) {
       return res.status(400).send({ status: 400, msg: "age is required." });
     }
 
@@ -160,7 +160,7 @@ export const updateEmployeeDetails = async (req, res) => {
       return res.status(400).send({ status: 400, msg: "Invalid age" });
     }
 
-    if (req.body.hasOwnProperty(gender) && !gender) {
+    if (req.body.hasOwnProperty("gender") && !gender) {
       return res.status(400).send({ status: 400, msg: "gender is required." });
     }
 
@@ -174,13 +174,13 @@ export const updateEmployeeDetails = async (req, res) => {
     
     console.log(typeof(isMarried), "isMarried")
 
-    if (req.body.hasOwnProperty(isMarried) && typeof(isMarried) != "boolean") {
+    if (req.body.hasOwnProperty("isMarried") && typeof(isMarried) != "boolean") {
       return res
         .status(400)
         .send({ status: 400, msg: "isMarried value is invalid" });
     }
 
-    if (req.body.hasOwnProperty(mobile) && !mobile) {
+    if (req.body.hasOwnProperty("mobile") && !mobile) {
       return res
         .status(400)
         .send({ status: 400, msg: "mobile number is require." });
@@ -190,7 +190,7 @@ export const updateEmployeeDetails = async (req, res) => {
       return res.status(400).send({ status: 400, msg: "Invalid Number." });
     }
 
-    if (req.body.hasOwnProperty(email) && !email) {
+    if (req.body.hasOwnProperty("email") && !email) {
       return res.status(400).send({ status: 400, msg: "email is required." });
     }
 

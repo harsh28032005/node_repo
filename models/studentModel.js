@@ -14,6 +14,7 @@ const studentSchema = new mongoose.Schema(
     mobile: { type: Number, unique: true, required: true },
     email: { type: String, unique: true, required: true },
     isMarried: { type: Boolean, default: false },
+    // isDeleted: {type: Boolean, default: false}
   },
   { timestamps: true }
 );

@@ -8,20 +8,20 @@ export const createStudent = async (req, res) => {
         .status(400)
         .send({ status: 400, msg: "Request body can not be empty..." });
     }
-    if (!req.body.fName) {
+    if (!req.body.fname) {
       return res
         .status(400)
         .send({ status: 400, msg: "first name is required." });
     }
-    if (!isNaN(req.body.fName || req.body.fName.trim())) {
+    if (!isNaN(req.body.fname || req.body.fname.trim())) {
       return res.status(400).send({ status: 400, msg: "Invalid Name." });
     }
-    if (!req.body.lName) {
+    if (!req.body.lname) {
       return res
         .status(400)
         .send({ status: 400, msg: "last name is required." });
     }
-    if (!isNaN(req.body.lName || req.body.lName.trim())) {
+    if (!isNaN(req.body.lname || req.body.lname.trim())) {
       return res.status(400).send({ status: 400, msg: "Invalid Name." });
     }
     if (!req.body.age) {
@@ -89,7 +89,7 @@ export const createStudent = async (req, res) => {
 export const getAllStudents = async (req, res) => {
   try {
     // Destructuring the request query
-    let { fName, age, page = 1, limit = 2 } = req.query;
+    let { fname, age, page = 1, limit = 2 } = req.query;
 
     // validation
     if (isNaN(page) || page == 0) {
@@ -109,10 +109,10 @@ export const getAllStudents = async (req, res) => {
     let skip = (+page - 1) * +limit; // (1-1)*5 = 0*5 = 0
 
     // Filter formation
-    let filter = {};
+    let filter = { isDeleted: false };
 
-    if (fName) {
-      filter.fName = fName;
+    if (fname) {
+      filter.fname = fname;
     }
     if (age) {
       filter.age = age;
@@ -170,7 +170,17 @@ export const getIndividualStudent = async (req, res) => {
 
 export const updateStudent = async (req, res) => {
   try {
-    let { _id, fname, lname, age, gender, mobile, email, isMarried } = req.body;
+    let {
+      _id,
+      fname,
+      lname,
+      age,
+      gender,
+      mobile,
+      email,
+      isMarried,
+      isDeleted,
+    } = req.body;
 
     if (!_id)
       return res.status(400).send({ status: 400, msg: "_id is required" });
@@ -230,7 +240,7 @@ export const updateStudent = async (req, res) => {
     let updateData = await Student.findOneAndUpdate(
       { _id: _id }, // to find the document based on condition
       req.body, // data to be update
-      { new: true, upsert: true } // { new: true }, returns the updated document. If it is not mentioned then findOneAndUpdate will return the old document without reflecting the new changes in response. And { upsert: true } tells the condition, if document found then update that document otherwise create a new document in the database.
+      { new: true, strict: false } // { new: true }, returns the updated document. If it is not mentioned then findOneAndUpdate will return the old document without reflecting the new changes in response. And { upsert: true } tells the condition, if document found then update that document otherwise create a new document in the database.
     );
     // let updateData = await Student.findOneAndUpdate(
     //   { _id: _id },
@@ -251,6 +261,42 @@ export const updateStudent = async (req, res) => {
       status: 200,
       msg: "Student updated successfully",
       data: updateData,
+    });
+  } catch (err) {
+    return res.status(500).send({ status: 500, msg: err.message });
+  }
+};
+
+export const deleteStudent = async (req, res) => {
+  try {
+    let { _id } = req.query;
+
+    if (!_id)
+      return res.status(400).send({ status: 400, msg: "_id is required" });
+
+    if (!mongoose.Types.ObjectId.isValid(_id))
+      return res.status(400).send({ status: 400, msg: "Invalid mongo _id" });
+
+    let checkStudentExist = await Student.findOne({
+      _id: _id,
+      isDeleted: false,
+    });
+
+    if (!checkStudentExist)
+      return res
+        .status(400)
+        .send({ status: 400, msg: "Document already deleted" });
+
+    let removedStudent = await Student.findByIdAndUpdate(
+      _id,
+      { $set: { isDeleted: true } },
+      { new: true }
+    );
+
+    return res.status(200).send({
+      status: 200,
+      msg: "Student deleted successfully",
+      // data: removedStudent,
     });
   } catch (err) {
     return res.status(500).send({ status: 500, msg: err.message });
